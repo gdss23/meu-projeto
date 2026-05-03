@@ -1,7 +1,7 @@
 {
-  "name": "Nome do Seu App",
-  "short_name": "App",
-  "description": "Uma breve descrição do que faz",
+  "name": "BinaryPro Cloud",
+  "short_name": "BinaryPro",
+  "description": "Plataforma de análise de dados e gráficos",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#000000",
