@@ -1,6 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<<link rel="manifest" href="/manifest.json">head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>BinaryPro Cloud</title>
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://unpkg.com/lightweight-charts@4.0.1/dist/lightweight-charts.standalone.production.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; padding: 10px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .logo { font-size: 20px; font-weight: bold; color: #58a6ff; }
+        .chart-container { width: 100%; height: 300px; margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
+        .trade-buttons { display: flex; gap: 10px; margin: 10px 0; }
+        .btn-call { flex: 1; background: #238636; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .btn-put { flex: 1; background: #da3633; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">BinaryPro Cloud</div>
+    </div>
+    <div class="chart-container" id="chart"></div>
+    <div class="trade-buttons">
+        <button class="btn-call" id="btnCall">CALL</button>
+        <button class="btn-put" id="btnPut">PUT</button>
+    </div>
+
+    <script>
+        <!DOCTYPE html>
+<html lang="pt-br">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BinaryPro Cloud</title>
@@ -288,11 +318,16 @@
         // Iniciar WebSocket
         connectWebSocket();
     </script>
-<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js');
-        });
-    }
-</script></body>
+</body>
+</html>
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+    </script>
+</body>
 </html>
