@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BinaryPro Cloud</title>
-    <!-- 🔽 LINHA OBRIGATÓRIA PARA O MANIFEST (PWA) 🔽 -->
     <link rel="manifest" href="/manifest.json">
     <script src="https://unpkg.com/lightweight-charts@4.0.1/dist/lightweight-charts.standalone.production.js"></script>
     <style>
@@ -14,8 +13,9 @@
         .logo { font-size: 20px; font-weight: bold; color: #58a6ff; }
         .chart-container { width: 100%; height: 300px; margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
         .trade-buttons { display: flex; gap: 10px; margin: 10px 0; }
-        .btn-call { flex: 1; background: #238636; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .btn-put { flex: 1; background: #da3633; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .btn-call, .btn-put { flex: 1; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-call { background: #238636; }
+        .btn-put { background: #da3633; }
         .timer { text-align: center; font-size: 28px; margin: 8px 0; }
         .config { background: #161b22; padding: 10px; border-radius: 8px; margin: 10px 0; }
         .config input, .config select { width: 100%; background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 10px; border-radius: 6px; margin-top: 6px; }
@@ -28,16 +28,12 @@
         <div class="logo">BinaryPro Cloud</div>
         <span>🤖 <span id="robotStatus">OFF</span></span>
     </div>
-
     <div class="chart-container" id="chart"></div>
-
     <div class="trade-buttons">
         <button class="btn-call" onclick="executeTrade('CALL')">📈 CALL</button>
         <button class="btn-put" onclick="executeTrade('PUT')">📉 PUT</button>
     </div>
-
     <div class="timer" id="timer">--:--</div>
-
     <div class="config">
         <div>🔌 Corretora</div>
         <select id="brokerSelect">
@@ -61,18 +57,16 @@
             <input type="checkbox" id="autoTrade" onchange="toggleAutoTrade()">
         </div>
     </div>
-
     <div class="log" id="log"></div>
 
     <script>
-        // ========== VARIÁVEIS ==========
+        // ========== CÓDIGO COMPLETO DO SEU APP (SEM DUPLICAÇÃO) ==========
         let chart, candleSeries, ema9Series, ema21Series, bollUpper, bollLower;
         let tradeActive = false, expiryTime, timerInterval;
         let autoTradeEnabled = false;
         let currentPrice = 0;
         let ws;
 
-        // ========== SONS ==========
         function playSound(type) {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -85,7 +79,6 @@
             } catch(e) {}
         }
 
-        // ========== GRÁFICO E INDICADORES ==========
         const container = document.getElementById('chart');
         chart = LightweightCharts.createChart(container, {
             width: container.clientWidth,
@@ -145,7 +138,6 @@
             }
         }
 
-        // ========== WEBSOCKET ==========
         function connectWebSocket() {
             ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@kline_1m');
             ws.onopen = () => log('Conectado ao feed de preços.');
@@ -173,7 +165,6 @@
             };
         }
 
-        // ========== ROBÔ ==========
         function autoAnalyze() {
             const data = candleSeries.data();
             if (!data || data.length < 21) return;
@@ -200,7 +191,6 @@
             executeTrade(sinal);
         }
 
-        // ========== TRADING ==========
         async function executeTrade(action) {
             if (tradeActive) return;
             const broker = document.getElementById('brokerSelect').value;
@@ -257,7 +247,6 @@
             el.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}<br>` + el.innerHTML;
         }
 
-        // ========== CARREGAR DADOS INICIAIS ==========
         fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1m&limit=100')
             .then(r => r.json())
             .then(data => {
@@ -276,7 +265,7 @@
         connectWebSocket();
     </script>
 
-    <!-- 🔽 REGISTRO DO SERVICE WORKER (OBRIGATÓRIO PARA INSTALAR) 🔽 -->
+    <!-- Service Worker (obrigatório para instalação) -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -285,4 +274,4 @@
         }
     </script>
 </body>
-</html>
+                </html>
