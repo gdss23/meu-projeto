@@ -4,36 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BinaryPro Cloud</title>
+    <!-- 🔽 LINHA OBRIGATÓRIA PARA O MANIFEST (PWA) 🔽 -->
     <link rel="manifest" href="/manifest.json">
-    <script src="https://unpkg.com/lightweight-charts@4.0.1/dist/lightweight-charts.standalone.production.js"></script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; padding: 10px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .logo { font-size: 20px; font-weight: bold; color: #58a6ff; }
-        .chart-container { width: 100%; height: 300px; margin-bottom: 10px; border-radius: 8px; overflow: hidden; }
-        .trade-buttons { display: flex; gap: 10px; margin: 10px 0; }
-        .btn-call { flex: 1; background: #238636; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        .btn-put { flex: 1; background: #da3633; color: white; padding: 14px; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="logo">BinaryPro Cloud</div>
-    </div>
-    <div class="chart-container" id="chart"></div>
-    <div class="trade-buttons">
-        <button class="btn-call" id="btnCall">CALL</button>
-        <button class="btn-put" id="btnPut">PUT</button>
-    </div>
-
-    <script>
-        <!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>BinaryPro Cloud</title>
     <script src="https://unpkg.com/lightweight-charts@4.0.1/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; }
@@ -126,31 +98,10 @@
             borderUpColor: '#238636', borderDownColor: '#da3633',
             wickUpColor: '#238636', wickDownColor: '#da3633'
         });
-        ema9Series = chart.addLineSeries({ color: '#fbbf24', lineWidth: 1 });   // Amarelo
-        ema21Series = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1 });  // Azul
-        bollUpper = chart.addLineSeries({ color: '#a78bfa', lineWidth: 1, lineStyle: 2 }); // Roxo
+        ema9Series = chart.addLineSeries({ color: '#fbbf24', lineWidth: 1 });
+        ema21Series = chart.addLineSeries({ color: '#60a5fa', lineWidth: 1 });
+        bollUpper = chart.addLineSeries({ color: '#a78bfa', lineWidth: 1, lineStyle: 2 });
         bollLower = chart.addLineSeries({ color: '#a78bfa', lineWidth: 1, lineStyle: 2 });
-
-        // ========== INDICADORES ==========
-        function updateIndicators() {
-            const data = candleSeries.data();
-            if (!data || data.length < 20) return;
-            const closes = data.map(c => c.close);
-            const times = data.map(c => c.time);
-
-            // EMA
-            const ema9 = calcEMA(closes, 9);
-            const ema21 = calcEMA(closes, 21);
-            if (ema9) ema9Series.setData(ema9.map((v, i) => ({ time: times[i], value: v })));
-            if (ema21) ema21Series.setData(ema21.map((v, i) => ({ time: times[i], value: v })));
-
-            // Bollinger
-            const bb = calcBollingerBands(closes, 20, 2);
-            if (bb) {
-                bollUpper.setData(bb.upper.map((v, i) => ({ time: times[i], value: v })));
-                bollLower.setData(bb.lower.map((v, i) => ({ time: times[i], value: v })));
-            }
-        }
 
         function calcEMA(data, period) {
             if (data.length < period) return null;
@@ -178,6 +129,22 @@
             return { upper, lower };
         }
 
+        function updateIndicators() {
+            const data = candleSeries.data();
+            if (!data || data.length < 20) return;
+            const closes = data.map(c => c.close);
+            const times = data.map(c => c.time);
+            const ema9 = calcEMA(closes, 9);
+            const ema21 = calcEMA(closes, 21);
+            if (ema9) ema9Series.setData(ema9.map((v, i) => ({ time: times[i], value: v })));
+            if (ema21) ema21Series.setData(ema21.map((v, i) => ({ time: times[i], value: v })));
+            const bb = calcBollingerBands(closes, 20, 2);
+            if (bb) {
+                bollUpper.setData(bb.upper.map((v, i) => ({ time: times[i], value: v })));
+                bollLower.setData(bb.lower.map((v, i) => ({ time: times[i], value: v })));
+            }
+        }
+
         // ========== WEBSOCKET ==========
         function connectWebSocket() {
             ws = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@kline_1m');
@@ -196,7 +163,6 @@
                 candleSeries.update(newCandle);
                 currentPrice = newCandle.close;
                 updateIndicators();
-
                 if (autoTradeEnabled && !tradeActive) autoAnalyze();
                 if (tradeActive) updateTimer();
             };
@@ -215,16 +181,12 @@
             const ema9 = calcEMA(closes, 9);
             const ema21 = calcEMA(closes, 21);
             if (!ema9 || !ema21 || ema9.length < 2 || ema21.length < 2) return;
-
             const last9 = ema9[ema9.length-1], last21 = ema21[ema21.length-1];
             const prev9 = ema9[ema9.length-2], prev21 = ema21[ema21.length-2];
-
             let sinal = null;
             if (prev9 <= prev21 && last9 > last21) sinal = 'CALL';
             else if (prev9 >= prev21 && last9 < last21) sinal = 'PUT';
             if (!sinal) return;
-
-            // Filtro Bollinger
             const bb = calcBollingerBands(closes, 20, 2);
             if (bb) {
                 const lastUpper = bb.upper[bb.upper.length-1];
@@ -234,7 +196,6 @@
                     return;
                 }
             }
-
             log('Sinal ' + sinal + ' detectado. Executando...');
             executeTrade(sinal);
         }
@@ -249,10 +210,8 @@
             const amount = parseFloat(document.getElementById('amount').value);
             const expiry = document.getElementById('expirySelect').value;
             if (!amount || amount <= 0) { log('Valor inválido.'); return; }
-
             playSound(action);
             log(`Ordem ${action} enviada (simulação).`);
-
             try {
                 const response = await fetch('/api/trade', {
                     method: 'POST',
@@ -269,7 +228,6 @@
             } catch(e) {
                 log('Servidor offline. Ordem local simulada.');
             }
-
             tradeActive = true;
             expiryTime = Date.now() + expiry * 60 * 1000;
             startTimer();
@@ -315,13 +273,10 @@
                 log('Painel pronto. Ative o robô.');
             });
 
-        // Iniciar WebSocket
         connectWebSocket();
     </script>
-</body>
-</html>
-    </script>
 
+    <!-- 🔽 REGISTRO DO SERVICE WORKER (OBRIGATÓRIO PARA INSTALAR) 🔽 -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
